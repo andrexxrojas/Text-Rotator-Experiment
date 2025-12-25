@@ -1,0 +1,17 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+@font-face {
+  font-family: "Lastik";
+  src: url("/Fonts/Lastik-Regular.otf") format("opentype");
+}
+
+:root {
+  --txt-font: "Lastik";
+  --txt-color: #fafafa;
+  --bg-color: #23291f;
+  --fg-color: #eafe8d;
+}

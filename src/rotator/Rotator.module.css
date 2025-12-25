@@ -1,0 +1,49 @@
+.hero-wrapper {
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--bg-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.hero-container {
+    padding: 4rem;
+}
+
+.hero-txt {
+    font-family: var(--txt-font), system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 70px;
+    color: var(--txt-color);
+    text-align: center;
+    margin: 0;
+    max-width: 800px;
+}
+
+.rotator {
+    display: inline-block;
+    position: relative;
+    width: auto;
+    height: 0.86em; /* Adjust if font type changes */
+}
+
+.word {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: none;
+    transform: translateY(-50%);
+    color: var(--fg-color);
+}
+
+.word.active {
+    display: inline-block;
+}
+
+@media (min-width: 1440px) {
+    .hero-txt {
+        font-size: 115px;
+        max-width: 1200px;
+    }
+}
