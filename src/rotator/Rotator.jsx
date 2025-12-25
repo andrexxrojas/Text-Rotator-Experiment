@@ -79,7 +79,7 @@ export default function Rotator() {
             );
 
             tl.to({}, { duration: pause });
-        });
+        });git
     }, { scope: wrapperRef, dependencies: [ready, fontSize] });
 
     return (
