@@ -26,6 +26,7 @@
     position: relative;
     width: auto;
     height: 0.86em; /* Adjust if font type changes */
+    opacity: 0;
 }
 
 .word {
