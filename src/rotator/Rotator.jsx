@@ -1,106 +1,95 @@
-import styles from "./Rotator.module.css";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
-import { useRef, useEffect, useState } from "react";
+import styles from "./Rotator.module.css";
 
 export default function Rotator() {
-    const rotatorRef = useRef(null);
+    const wrapperRef = useRef(null);
     const heroTxtRef = useRef(null);
+    const wordRef = useRef(null);
     const tlRef = useRef(null);
-    const currentIndexRef = useRef(0);
     const [ready, setReady] = useState(false);
+    const [fontSize, setFontSize] = useState(0);
 
-    // Hide rotator initially with CSS:
-    // .rotator { opacity: 0; }
+    const words = ["design", "branding", "motion", "web"];
 
-    // Step 1: Wait for font to be loaded and DOM ready
     useEffect(() => {
-        const init = async () => {
-            if (!heroTxtRef.current) return;
+        let observer;
 
-            // Wait for all fonts to be ready
-            await document.fonts.ready;
-
+        document.fonts.ready.then(() => {
             setReady(true);
-        };
-        init();
-    }, []);
 
-    // Step 2: GSAP Rotator
-    useGSAP(() => {
-        if (!rotatorRef.current || !ready) return;
-
-        requestAnimationFrame(() => {
-            if (tlRef.current) tlRef.current.kill();
-
-            const words = Array.from(rotatorRef.current.children);
-            const pause = 2;
-
-            // Measure widths after font loaded
-            const widths = words.map((word) => {
-                word.style.display = "inline-block";
-                return word.offsetWidth;
+            // Observe font-size or element size changes
+            const observer = new ResizeObserver(() => {
+                const computed = window.getComputedStyle(heroTxtRef.current).fontSize;
+                const size = parseFloat(computed);
+                setFontSize(prev => (prev !== size ? size : prev));
             });
 
-            rotatorRef.current.style.width = widths[currentIndexRef.current] + "px";
-
-            // Show rotator after measuring
-            rotatorRef.current.style.opacity = 1;
-
-            const tl = gsap.timeline({ repeat: -1 });
-            tlRef.current = tl;
-
-            for (let i = 0; i < words.length; i++) {
-                const currentWord = words[(i + currentIndexRef.current) % words.length];
-                const nextWord = words[(i + currentIndexRef.current + 1) % words.length];
-                const nextIndex = (i + currentIndexRef.current + 1) % words.length;
-
-                if (i === 0) {
-                    gsap.set(currentWord, { yPercent: 0, opacity: 1 });
-                    currentWord.classList.add(styles.active);
-                } else {
-                    gsap.set(currentWord, { yPercent: 100, opacity: 0 });
-                    currentWord.classList.remove(styles.active);
-                }
-
-                tl.to(currentWord, {
-                    yPercent: -30,
-                    opacity: 0,
-                    duration: 0.4,
-                    ease: "power1.inOut",
-                    onComplete: () => {
-                        currentWord.classList.remove(styles.active);
-                        currentIndexRef.current = nextIndex;
-                    },
-                }, `+=${pause}`)
-                    .to(rotatorRef.current, {
-                        width: widths[nextIndex],
-                        duration: 0.3,
-                        ease: "power2.inOut",
-                    })
-                    .set(nextWord, { yPercent: 30, opacity: 0 })
-                    .to(nextWord, {
-                        yPercent: 0,
-                        opacity: 1,
-                        duration: 0.4,
-                        ease: "back.out(2)",
-                        onStart: () => nextWord.classList.add(styles.active),
-                    }, "<");
-            }
+            observer.observe(heroTxtRef.current);
         });
-    }, { scope: rotatorRef, dependencies: [ready] });
+
+        return () => {
+            if (observer) observer.disconnect();
+        };
+    }, []);
+
+
+    useGSAP(() => {
+        if (!ready || !wrapperRef.current || !wordRef.current) return;
+        if (tlRef.current) tlRef.current.kill();
+
+        const wrapper = wrapperRef.current;
+        const el = wordRef.current;
+
+        el.textContent = words[0];
+        gsap.set(el, { yPercent: 0, autoAlpha: 1 });
+        wrapper.style.width = el.offsetWidth + "px";
+
+        const tl = gsap.timeline({ repeat: -1 });
+        tlRef.current = tl;
+        const duration = 0.35;
+        const pause = 1.5;
+
+        words.forEach((_, i) => {
+            const nextIndex = (i + 1) % words.length;
+
+            tl.to(
+                el,
+                { yPercent: -30, autoAlpha: 0, duration, ease: "power4.in" }
+            );
+
+            tl.add(() => {
+                el.textContent = words[nextIndex];
+                el.style.width = "auto";
+                const nextWidth = el.offsetWidth;
+                el.dataset.nextWidth = nextWidth;
+                gsap.set(el, { yPercent: 30, autoAlpha: 0 });
+            });
+
+            tl.to(wrapper, {
+                width: () => el.dataset.nextWidth + "px",
+                duration: 0.45,
+                ease: "power2.inOut",
+            });
+
+            tl.to(
+                el,
+                { yPercent: 0, autoAlpha: 1, duration, ease: "back.out(2)" },
+            );
+
+            tl.to({}, { duration: pause });
+        });
+    }, { scope: wrapperRef, dependencies: [ready, fontSize] });
 
     return (
         <div className={styles["hero-wrapper"]}>
             <div className={styles["hero-container"]}>
                 <p ref={heroTxtRef} className={styles["hero-txt"]}>
                     Our studio can handle all your&nbsp;
-                    <span ref={rotatorRef} className={styles["rotator"]}>
-            <span className={styles["word"]}>design</span>
-            <span className={styles["word"]}>branding</span>
-            <span className={styles["word"]}>motion</span>
-            <span className={styles["word"]}>web</span>
-          </span>
+                    <span ref={wrapperRef} className={styles["rotator"]}>
+                        <span ref={wordRef} className={styles["animated-word"]}></span>
+                    </span>
                     &nbsp;needs.
                 </p>
             </div>

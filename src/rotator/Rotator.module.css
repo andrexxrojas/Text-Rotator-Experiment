@@ -25,21 +25,13 @@
     display: inline-block;
     position: relative;
     width: auto;
-    height: 0.86em; /* Adjust if font type changes */
-    opacity: 0;
 }
 
-.word {
-    position: absolute;
-    top: 0;
-    left: 0;
-    display: none;
-    transform: translateY(-50%);
-    color: var(--fg-color);
-}
-
-.word.active {
+.animated-word {
     display: inline-block;
+    color: var(--fg-color);
+    will-change: transform, opacity, width;
+    vertical-align: baseline;
 }
 
 @media (min-width: 1440px) {
@@ -48,3 +40,4 @@
         max-width: 1200px;
     }
 }
+

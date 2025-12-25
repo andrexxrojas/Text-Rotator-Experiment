@@ -10,7 +10,3 @@ https://github.com/user-attachments/assets/b4d8e2ce-3c3c-4f17-9e67-9e9bd989cba5
 - Dynamically adjusts rotator width based on the current word.
 - Tracks the current word to maintain state even after font size changes.
 - Responsive to font size changes using `ResizeObserver`.
-
-## Note
-
-The height of the rotator depends on the **font type**. If you change the font, update the rotator height to maintain proper alignment.
