@@ -19,7 +19,6 @@ export default function Rotator() {
         document.fonts.ready.then(() => {
             setReady(true);
 
-            // Observe font-size or element size changes
             const observer = new ResizeObserver(() => {
                 const computed = window.getComputedStyle(heroTxtRef.current).fontSize;
                 const size = parseFloat(computed);
@@ -79,7 +78,7 @@ export default function Rotator() {
             );
 
             tl.to({}, { duration: pause });
-        });git
+        });
     }, { scope: wrapperRef, dependencies: [ready, fontSize] });
 
     return (
