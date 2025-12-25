@@ -2,6 +2,8 @@
 
 This is a responsive, animated word rotator component built with React and GSAP. It cycles through a set of words in a sentence, animating them vertically with smooth easing, while dynamically adjusting the container width to fit each word.
 
+https://github.com/user-attachments/assets/b4d8e2ce-3c3c-4f17-9e67-9e9bd989cba5
+
 ## Features
 
 - Smooth vertical animation for words using GSAP timelines.
